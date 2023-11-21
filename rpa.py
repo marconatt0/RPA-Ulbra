@@ -1,9 +1,9 @@
-#criando navegador
-
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from PySimpleGUI import PySimpleGUI as sg
 
+#criando navegador
 options = webdriver.ChromeOptions()
 options.add_experimental_option("detach", True)
 
@@ -11,49 +11,58 @@ service = Service(ChromeDriverManager().install())
 
 nav = webdriver.Chrome(service=service, options=options)
 
-#input para usuario
-
-usuario = input('Coloque seu usuário: ')
-senha = input('Coloque sua senha: ')
-
 #entrando no prime
 
-nav.get('https://596057.mannesoftprime.com.br/mannesoft/login.php')
+sg.theme('Reddit')
+layout = [
+    [sg.Text('Usuario'), sg.Input(key='usuario')],
+    [sg.Text('Senha'), sg.Input(key='senha', password_char='*')],
+    [sg.Button('Entrar')]
+]
 
-nav.find_element('xpath',
-                 '//*[@id="USUARIO"]').send_keys(usuario)
+janela = sg.Window('Tela de Login', layout)
 
-nav.find_element('xpath',
-                 '/html/body/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/form/table/tbody/tr[4]/td[2]/input').send_keys(senha)
-
-nav.find_element('xpath',
-                 '//*[@id="edicao"]/table/tbody/tr[5]/td[2]/table/tbody/tr[1]/td[2]/img').click()
-
-#aprovação de candidatos
-
-def aprovacao_aluno():
-    nav.find_element('xpath', '/html/body/div[2]/div/ul/li[2]/ul/li[10]/ul/li[4]/a').click()
-
-#menu de opções de telas
-
-op = 0
-
-while op != 5:
-    print('''
-          Qual tela deseja ir?
-
-          1. Aprovação de alunos
-          2. ...
-          3. ...
-          4. ...
-          5. Sair
-          ''')
-    op = int(input('Qual opção? '))
-    if op == 1:
-       aprovacao_aluno()
-    if op == 5:
-        print('Saindo...')
+while True:
+    eventos, valores = janela.read()
+    if eventos == sg.WIN_CLOSED:
         break
-    else:
-        print('opção inválida')
+    elif eventos == 'Entrar':
+        janela.close()
+        nav.get('https://596057.mannesoftprime.com.br/mannesoft/login.php')
 
+        nav.find_element('xpath',
+                        '//*[@id="USUARIO"]').send_keys(valores['usuario'])
+
+        nav.find_element('xpath',
+                        '/html/body/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/form/table/tbody/tr[4]/td[2]/input').send_keys(valores['senha'])
+
+        nav.find_element('xpath',
+                        '//*[@id="edicao"]/table/tbody/tr[5]/td[2]/table/tbody/tr[1]/td[2]/img').click()
+
+        #aprovação de candidatos
+
+        def aprovacao_aluno():
+            nav.find_element('xpath', '/html/body/div[2]/div/ul/li[2]/ul/li[10]/ul/li[4]/a').click()
+            nav.get('')
+
+        #menu de opções de telas
+
+        sg.theme('Reddit')
+        layout = [
+            [sg.Button('Aprovação de alunos')],
+            [sg.Button('...')],
+            [sg.Button('...')],
+            [sg.Button('...')],
+            [sg.Button('...')],
+            [sg.Button('Sair')]
+        ]
+
+        janela = sg.Window('Menu de Telas', layout)
+
+        while True:
+            eventos, valores = janela.read()
+            if eventos == sg.WIN_CLOSED or eventos == 'Sair':
+                break
+            elif eventos == 'Aprovação de alunos':
+                aprovacao_aluno()
+            

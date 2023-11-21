@@ -39,11 +39,16 @@ while True:
         nav.find_element('xpath',
                         '//*[@id="edicao"]/table/tbody/tr[5]/td[2]/table/tbody/tr[1]/td[2]/img').click()
 
-        #aprovação de candidatos
+        #Página Inicial
+
+        def pagina_inicial():
+            nav.get('https://596057.mannesoftprime.com.br/mannesoft/sistema.php?ACAO=publico/caixa_de_trabalho.php&mnsSetRef=1')
+
+        #Aprovação de candidatos
 
         def aprovacao_aluno():
-            nav.find_element('xpath', '/html/body/div[2]/div/ul/li[2]/ul/li[10]/ul/li[4]/a').click()
-            nav.get('')
+            nav.execute_script("window.open('https://596057.mannesoftprime.com.br/mannesoft/sistema.php?ACAO=publico/vestibulando.selecao.php&mnsSetRef=1')")
+            nav.execute_script("window.open('https://596057.mannesoftprime.com.br/mannesoft/sistema.php?ACAO=publico/dcto.lista.php&dcto=62')")
 
         #menu de opções de telas
 

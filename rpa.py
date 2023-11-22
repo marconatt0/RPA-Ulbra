@@ -3,6 +3,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from PySimpleGUI import PySimpleGUI as sg
 import pyautogui
+import time
 
 #criando navegador
 options = webdriver.ChromeOptions()
@@ -16,10 +17,8 @@ nav = webdriver.Chrome(service=service, options=options)
 
 sg.theme('Reddit')
 layout = [
-    [sg.Text('Usuario Prime'), sg.Input(key='usuario')],
-    [sg.Text('Senha Prime'), sg.Input(key='senha_prime', password_char='*')],
-    [sg.Text('Email'), sg.Input(key='email')],
-    [sg.Text('Senha'), sg.Input(key='senha', password_char='*')],
+    [sg.Text('Usuario Prime'), sg.InputText(default_text=sg.user_settings_get_entry('-usuario-'))],
+    [sg.Text('Senha Prime'), sg.InputText(default_text=sg.user_settings_get_entry('senha_prime'), password_char='*')],
     [sg.Button('Entrar')]
 ]
 
@@ -27,48 +26,31 @@ janela = sg.Window('Tela de Login', layout)
 
 while True:
     eventos, valores = janela.read()
+        
+        
+    print('Login salvo', valores[0], valores[1])
+    sg.user_settings_set_entry('-usuario-', valores[0])
+    sg.user_settings_set_entry('senha_prime', valores[0])
+    break
+
+while True:
+    eventos, valores = janela.read()
+
     if eventos == sg.WIN_CLOSED:
         break
     elif eventos == 'Entrar':
         janela.close()
+        
         nav.get('https://596057.mannesoftprime.com.br/mannesoft/login.php')
 
         nav.find_element('xpath',
-                        '//*[@id="USUARIO"]').send_keys(valores['usuario'])
+                        '//*[@id="USUARIO"]').send_keys(valores[0])
 
         nav.find_element('xpath',
-                        '/html/body/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/form/table/tbody/tr[4]/td[2]/input').send_keys(valores['senha_prime'])
+                        '/html/body/table/tbody/tr[2]/td[2]/table/tbody/tr/td[2]/form/table/tbody/tr[4]/td[2]/input').send_keys(valores[1])
 
         nav.find_element('xpath',
                         '//*[@id="edicao"]/table/tbody/tr[5]/td[2]/table/tbody/tr[1]/td[2]/img').click()
-
-        nav.execute_script("window.open('https://accounts.google.com/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ifkv=ASKXGp39raIgsOjfrBdzsCVKymIYqifIPB0scbaOya-Sn5QlhZznDQWA4UJ1ehPCNzATzIXyU6H1Ug&rip=1&sacu=1&service=mail&flowName=GlifWebSignIn&flowEntry=ServiceLogin&dsh=S-2062608840%3A1700595883599523&theme=glif')")
-
-        pyautogui.write(valores['email'])
-                            
-        nav.find_element('xpath', 
-                        '//*[@id="identifierNext"]/div/button/span').click()
-
-        nav.find_element('xpath', 
-                        '/html/body/div[1]/div[1]/div[2]/div/c-wiz/div/div[2]/div/div[1]/div/form/span/section[2]/div/div/div[1]/div[1]/div/div/div/div/div[1]/div/div[1]/input').send_keys(valores['senha'])
-        
-        nav.find_element('xpath', 
-                        '//*[@id="passwordNext"]/div/button/span').click()
-
-        while email == "sim":
-            try:
-                img = pyautogui.locateCenterOnScreen('email_token.PNG', confidence=0.7)
-                pyautogui.click(img.x, img.y)
-                time.sleep(2)
-                email = "não"
-            except:
-                print('não encontrei')
-
-        # login = [valores['usuario'], valores['senha']]
-
-        # with open('login.txt', 'w') as arquivo:
-        #     for valor in login:
-        #         arquivo.write(str(valor) + '\n')
 
         #Aprovação de candidatos
 
@@ -101,11 +83,11 @@ while True:
 
         sg.theme('Reddit')
         layout = [
-            [sg.Button('Aprovação de Alunos')],
-            [sg.Button('Matrícula')],
-            [sg.Button('Cadastro Curso')],
-            [sg.Button('Cadastro Disciplina')],
-            [sg.Button('Processo Seletivo')],
+            [sg.Button('Aprovação de Alunos'), sg.Button('...')],
+            [sg.Button('Matrícula'), sg.Button('...')],
+            [sg.Button('Cadastro Curso'), sg.Button('...')],
+            [sg.Button('Cadastro Disciplina'), sg.Button('...')],
+            [sg.Button('Processo Seletivo'), sg.Button('...')],
             [sg.Button('Sair')]
         ]
 
